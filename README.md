@@ -6,3 +6,4 @@
 - [创建动态页面](04.create-dynamic-pages.md)
 - [使用路由掩码创建干净的URL](05.clean-urls-with-route-masking.md)
 - [干净URL的服务器端支持](06.server-side-support-for-clean-urls.md)
+- [为页面获取数据](07.fetching-data-for-pages.md)
