@@ -1,0 +1,147 @@
+# 创建动态页面
+
+现在,我们知道了如何使用多个页面创建一个基本的Next.js应用程序. 为了创建页面, 我们需要在磁盘上创建实际的文件.
+
+但是, 在真实的应用场景下,我们通常需要通过数据创建动态的页面, 用动态的方式显示页面内容. 在Next.js中有多种方式来实现这个目的.
+
+首先, 我们使用查询串来创建一个动态的页面. 我们创建一个简单的博客应用程序. 在Index页面显示一个博客列表.
+
+![Display blog list](https://cloud.githubusercontent.com/assets/50838/24542722/600b9ce8-161a-11e7-9f1d-7ed08ff394fd.png)
+
+当你点击博客标题时, 可以看到博客的具体内容.
+
+![Display blog content](https://cloud.githubusercontent.com/assets/50838/24542721/5fdd9c26-161a-11e7-9b10-296d4cb6912d.png)
+
+现在, 让我们开始创建这个博客程序.
+
+## 设置
+
+为了按照本课程学习, 需要有一个示例Next.js应用程序, 为此, 你可以下载下面的这个应用程序作为学习案例:
+
+```shell
+git clone https://github.com/arunoda/learnnextjs-demo.git
+cd learnnextjs-demo
+git checkout using-shared-components
+```
+
+可以用下面的命令来运行:
+
+```shell
+npm install
+npm run dev
+```
+
+现在, 访问 [http://localhost:3000/](http://localhost:3000/).
+
+## 添加博客列表
+
+首先, 让我们在首页添加博客标题列表, 添加下面的代码到 `pages/index.js` 模块文件中.
+
+```jsx
+import Layout from '../components/MyLayout.js'
+import Link from 'next/link'
+
+const PostLink = (props) => (
+  <li>
+    <Link href={`/post?title=${props.title}`}>
+      <a>{props.title}</a>
+    </Link>
+  </li>
+)
+
+export default () => (
+  <Layout>
+    <h1>My Blog</h1>
+    <ul>
+      <PostLink title="Hello Next.js"/>
+      <PostLink title="Learn Next.js is awesome"/>
+      <PostLink title="Deploy apps with Zeit"/>
+    </ul>
+  </Layout>
+)
+```
+
+然后, 方位 [http://localhost:3000](http://localhost:3000), 你会看到下面的内容:
+
+![Blog list](https://cloud.githubusercontent.com/assets/50838/24542722/600b9ce8-161a-11e7-9f1d-7ed08ff394fd.png)
+
+## 通过查询串传递数据
+
+我们通过查询串参数传递数据, 在这个例子中为"title"查询串阐述, 表示博客的标题, 我们下面为博客的标题实现一个自定义的`PostLink`组件.
+
+```jsx
+const PostLink = (props) => (
+  <li>
+    <Link href={`/post?title=${props.title}`}>
+      <a>{props.title}</a>
+    </Link>
+  </li>
+)
+```
+
+## 创建博客页面
+
+创建博客页面, 显示博客内容, 为此我们需要从查询串中获取标题. 下面创建一个 `pages/post.js` 文件, 并添加如下内容:
+
+```jsx
+import Layout from '../components/MyLayout.js'
+
+export default (props) => (
+    <Layout>
+       <h1>{props.url.query.title}</h1>
+       <p>This is the blog post content.</p>
+    </Layout>
+)
+```
+
+现在, 页面看起来像这样:
+
+![Blog page](https://cloud.githubusercontent.com/assets/50838/24542721/5fdd9c26-161a-11e7-9b10-296d4cb6912d.png)
+
+- 每个页面获得一个"URL"属性, 其中包含当前URL相关的详细信息
+- 这里我们使用"query"对象, 它包含查询串参数
+- 然后, 我们从 `props.url.query.title` 获取博客的标题
+
+现在, 我们做一点细微的修改, 替换 `pages/post.js`的内容为如下:
+
+```jsx
+import Layout from '../components/MyLayout.js'
+
+const Content = (props) => (
+  <div>
+    <h1>{props.url.query.title}</h1>
+    <p>This is the blog post content.</p>
+  </div>
+)
+
+export default () => (
+    <Layout>
+       <Content />
+    </Layout>
+)
+```
+
+然后访问 [http://localhost:3000/post?title=Hello%20Next.js](http://localhost:3000/post?title=Hello%20Next.js) 看是什么效果?
+
+## 特殊属性"url"
+
+你看到了, 代码会抛出一个如下所示的错误页面:
+
+![Error page](https://cloud.githubusercontent.com/assets/50838/24542720/5fd985a0-161a-11e7-8971-bc677906b1bf.png)
+
+这是因为, `url` 属性仅暴露给了页面的根主键. 并未暴露给页面中的其他组件. 但如果需要, 可以像下面这样把`url`属性传递给其他组件.
+
+```jsx
+export default (props) => (
+    <Layout>
+       <Content url={props.url} />
+    </Layout>
+)
+```
+
+## 最后
+
+现在我们已经学习到了如何使用查询串创建动态页面. 但这仅仅只是开始. 一个动态页面需要更多的信息来渲染, 我们不太可能通过查询串传递所有的信息. 我们想要有一个干净的像这样的URL: [http://localhost:3000/blog/hello-nextjs](http://localhost:3000/blog/hello-nextjs).
+
+接下来, 我们将会学到关于这方面的所有信息. 这是所有其他事情的基础.
+
