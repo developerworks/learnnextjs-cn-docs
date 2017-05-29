@@ -1,0 +1,124 @@
+# 页面之间的导航
+
+现在我们知道了如何创建一个Next.js应用程序并且运行它. 我们的示例应用程序只有一个简单的页面, 但是如果你想, 可以添加更多的页面. 例如, 可以创建一个 "About" 页面, 并添加内容到 `pages/about.js`.
+
+```jsx
+export default () => {
+  <div>
+    <p>This is the about page</p>
+  </div>
+}
+```
+
+然后, 我们可以打开 [http://localhost:3000/about](http://localhost:3000/about) 来访问这个页面. 然后我们需要链接这些页面, 使用HTML的 "a" 标签, 但是它并不会执行客户端导航, 它是执行的服务器端导航, 这并不是我们想要的.
+
+为了支持客户端导航, 我们需要使用Next.js 的Link API, 它是通过 `next/link` 导出的. 下面我们来看看如何使用它.
+
+## 设置
+
+为了按照本课程学习, 需要有一个示例Next.js应用程序, 为此, 你可以下载下面的这个应用程序作为学习案例:
+
+```shell
+git clone https://github.com/arunoda/learnnextjs-demo.git
+cd learnnextjs-demo
+git checkout getting-started
+```
+
+可以用下面的命令来运行:
+
+```shell
+npm install
+npm run dev
+```
+
+现在, 访问 [http://localhost:3000/](http://localhost:3000/).
+
+## 使用 Link
+
+现在我们将会使用 `next/link` 来连接我们的页面. 添加如下代码到 `page/index.js` 模块文件
+
+```jsx
+// This is the Link API
+import Link from 'next/link'
+
+const Index = () => (
+  <div>
+    <Link href="/about">
+      <a>About Page</a>
+    </Link>
+    <p>Hello Next.js</p>
+  </div>
+)
+
+export default Index
+```
+
+在这个例子中, 我们导入了 `next/link` 作为 Link 模块, 并且向下面这样使用它:
+
+```html
+<Link href="/about">
+  <a>About Page</a>
+</Link>
+```
+
+现在, 再次访问 [http://localhost:3000/](http://localhost:3000/), 点击 "About Page" 连接, 你将被带到 "About Page" 页面.
+
+> 这是客户端导航, 行为发生在客户端, 没有请求服务器. 你可以打开浏览器开发工具的网络标签, 看看有没有网络请求来验证.
+
+下面是一个简单的任务:
+
+- 访问 [http://localhost:3000/](http://localhost:3000/)
+- 点击 "About Page"
+- 点击浏览器的后退按钮
+
+描述一下, 点击后退按钮后你看到了什么? 是的, 客户端导航把你带回了Index页面.
+
+## 客户端历史支持
+
+当你点击后退按钮的时候, Next.js把你带回了Index页面, 这个过程完全是客户端实现的; `next/link` 为你处理了所有 `location.history`相关的事情. 你甚至不需要编写任意一行客户端路由代码.
+
+你需要做的只是简单的连接页面而已, 就这样!
+
+## 给连接添加样式
+
+大多数情况, 我们可能想要给连接添加一点样式. 想下面这样:
+
+```html
+<Link href="/about">
+  <a style={{ fontSize: 20 }}>About Page</a>
+</Link>
+```
+
+添加了样式后, 你会看到, 样式被正确的设置了.
+
+但是, 如果你想下面一样呢, 会发生什么?
+
+```html
+<Link href="/about" style={{ fontSize: 20 }}>
+  <a>About Page</a>
+</Link>
+```
+
+对的, 没任何效果!
+
+## 连接仅仅是一个高阶组件(HOC:Higher Order Component)
+
+实际上, 样式属性在 `next/link` 上是没有效果的. 因为 `next/link` 仅仅是一个能够接收 `href` 属性, 以及其他属性的高阶主键. 如果你要给它设置样式, 需要在底层的组件进行设置.
+
+## 使用按钮进行连接
+
+现在, 我们需要一个按钮而不是一个连接, 现在我们需要修改我们的导航代码, 像这样:
+
+```jsx
+<Link href="/about">
+  <button>Go to About Page</button>
+</Link>
+```
+
+## 让连接能够任意工作
+
+就像一个按钮一样, 你可以在Link中放置任何你的自定义React组件, 甚至是一个`div`元素.放在Link中的组件的唯一要求是, 它能够接受一个 `onClick` 属性.
+
+## 连接虽然简单, 但是强大
+
+这里, 我们只看到了关于 `next/link` 的很基本的例子. 接下来的课程我们会更加深入的了解如何使用Link. 如果你想要了解Next.js的路由功能, 参考 [Next.js 路由文档](https://github.com/zeit/next.js#routing) 文档.
